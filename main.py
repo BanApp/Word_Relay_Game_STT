@@ -6,23 +6,34 @@ import speech_recognition as sr
 import random
 import time
 import os
+import threading
 from tkinter import *
+global audio
+from time import sleep
 
+def timeshow(k,a):
+    a = list(a)
+    for i in range(k):
+        if i < k-1:
+            print((k-i),'초!',end=' ')
+        else:
+            print((k - i), '초!')
+        sleep(1)
 
-def countdown(num_of_secs):
-    while num_of_secs:
-        s = num_of_secs
-        print(s, end=' ')
-        time.sleep(1)
-        num_of_secs -= 1
-    print('시간종료')
+def rec(s,t):
+    global audio
+    Recognizer = sr.Recognizer()
+    audio = Recognizer.record(s, duration=t)
 
 def speak(text ,lang="ko", speed=False):
     tts = gTTS(text=text, lang=lang , slow=speed)
     tts.save("./tts.mp3")
     os.system("afplay " + "./tts.mp3")
 
+
+
 def etoe(time,level):
+    global audio
     rdr = pd.read_csv('myungsa.csv', engine='pyarrow', index_col=0)
     Recognizer = sr.Recognizer()
     mic = sr.Microphone()
@@ -30,10 +41,15 @@ def etoe(time,level):
     check = {}
     p_key = 'a'
     c_key = 'b'
-    k = 'Y'
+
     while 1:
         with mic as source:
-            audio = Recognizer.record(source, duration=time)
+            th1 = threading.Thread(target=rec,args=(source,time))
+            th2 = threading.Thread(target=timeshow,args=(time,[]))
+            th1.start()
+            th2.start()
+            th1.join()
+            th2.join()
         try:
             data = Recognizer.recognize_google(audio_data=audio, language="ko-kr")
             data = data.replace(" ", "")
@@ -64,7 +80,7 @@ def etoe(time,level):
         if i == data and len(i) > 1:
             p_key = data[-1]
             tmp.append(data)
-            print('[Pass]')
+            #print('[Pass]')
             print()
             ck = 1
             break
@@ -92,7 +108,7 @@ def etoe(time,level):
 
             if check[x[0]] <= level:
                 print("Computer:", x)
-                print('[Pass]')
+                #print('[Pass]')
                 print()
                 speak(x)
                 tmp.append(x)
@@ -105,7 +121,12 @@ def etoe(time,level):
             # 사람 순서
             while 1:
                 with mic as source:
-                    audio = Recognizer.record(source, duration=time)
+                    th1 = threading.Thread(target=rec, args=(source, time))
+                    th2 = threading.Thread(target=timeshow, args=(time, []))
+                    th1.start()
+                    th2.start()
+                    th1.join()
+                    th2.join()
                 try:
                     data = Recognizer.recognize_google(audio_data=audio, language="ko-kr")
                     data = data.replace(" ", "")
@@ -166,11 +187,12 @@ def etoe(time,level):
                 print('프로그램을 종료 합니다.')
                 exit(0)
 
-def first():
+def start():
+    print("<음성 인식 지속 시간과 난이도를 입력해주세요>")
+    x, y = map(int, sys.stdin.readline().split())
     while 1:
-        print("<음성 인식 지속 시간과 난이도를 입력해주세요>")
-        x, y = map(int, sys.stdin.readline().split())
         etoe(x,y)
 
-first()
+start()
+
 
