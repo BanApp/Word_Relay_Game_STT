@@ -8,4 +8,5 @@
 
 ### Ver 1.2) Thread 기능을 활용해서 타이머 구현, 음성인식과 동시에 타이머 숫자 감소.
 
-<img width="857" alt="스크린샷 2022-11-17 오후 5 04 31" src="https://user-images.githubusercontent.com/93313445/202390421-6ac697c4-5d20-4c45-a388-d303eb66dcd1.png">
+
+<img width="954" alt="스크린샷 2022-11-17 오후 5 07 54" src="https://user-images.githubusercontent.com/93313445/202391136-2ca12097-19fb-4bd7-89c4-77def7b8a45e.png">
